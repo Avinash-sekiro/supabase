@@ -271,35 +271,7 @@ document.getElementById('closeSchoolButton').addEventListener('click', () => {
     overlay.style.opacity = '0';
     setTimeout(() => overlay.style.display = 'none', 300);
 });
-
-document.getElementById('schoolForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const schoolData = {
-        name: document.getElementById('school_name').value,
-        address: document.getElementById('school_address').value,
-        contact_number: document.getElementById('contact_number').value
-    };
-
-    try {
-        const response = await supabaseRequest('/rest/v1/schools', {
-            method: 'POST',
-            body: JSON.stringify(schoolData)
-        });
-
-        if (response.ok) {
-            const overlay = document.getElementById('schoolModalOverlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.style.display = 'none', 300);
-            document.getElementById('schoolForm').reset();
-            loadSchools();
-        } else {
-            console.error('Error adding school:', await response.text());
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});
-
+document.getElementById('schoolForm').addEventListener('submit', handleSchoolSubmit);
 
 // Function to close add form modal
 function closeAddForm() {
@@ -352,6 +324,12 @@ function checkAuth() {
     return true;
 }
 
+// Function to handle logout
+function handleLogout() {
+    localStorage.removeItem('isAuthenticated');
+    window.location.href = 'login.html';
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
     if (!checkAuth()) return;
@@ -366,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('schoolForm').addEventListener('submit', handleSchoolSubmit);
     document.getElementById('addSchoolButton').addEventListener('click', showSchoolForm);
     document.getElementById('closeSchoolButton').addEventListener('click', closeSchoolForm);
+    document.getElementById('logoutButton').addEventListener('click', handleLogout);
     
     // Add event listener for school selection
     document.getElementById('school_select').addEventListener('change', (e) => {
@@ -385,6 +364,7 @@ window.refreshData = refreshData;
 window.editRecord = editRecord;
 window.deleteRecord = deleteRecord;
 window.showDetailPage = showDetailPage;
+window.handleLogout = handleLogout;
 
 async function loadStudents() {
     try {
